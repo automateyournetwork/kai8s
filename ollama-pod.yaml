@@ -6,9 +6,9 @@ metadata:
     app: ollama
 spec:
   containers:
-  - name: ollama
+  - name: ollama-llama3
     image: ollama/ollama:latest
-    command: ['sh', '-c', 'ollama start & sleep 10; ollama pull llama3 && tail -f /dev/null']
+    command: ['sh', '-c', 'ollama start --port 11434 & sleep 10; ollama pull llama3 -o /models/llama3-model.bin && tail -f /dev/null']
     ports:
     - containerPort: 11434
     env:
@@ -24,7 +24,36 @@ spec:
     volumeMounts:
     - mountPath: /models
       name: model-storage
+  - name: ollama-phi3
+    image: ollama/ollama:latest
+    command: ['sh', '-c', 'ollama start --port 11435 & sleep 10; ollama pull phi3 -o /models/phi3-model.bin && tail -f /dev/null']
+    ports:
+    - containerPort: 11435
+    env:
+    - name: OLLAMA_MODEL_PATH
+      value: /models/
+    resources:
+      requests:
+        memory: "2Gi"
+        cpu: "1"
+      limits:
+        memory: "4Gi"
+        cpu: "2"
+    volumeMounts:
+    - mountPath: /models
+      name: model-storage
+  - name: nginx
+    image: nginx:latest
+    ports:
+    - containerPort: 80
+    volumeMounts:
+    - name: nginx-config
+      mountPath: /etc/nginx/nginx.conf
+      subPath: nginx.conf
   volumes:
   - name: model-storage
     emptyDir: {}
+  - name: nginx-config
+    configMap:
+      name: nginx-config
   restartPolicy: Always

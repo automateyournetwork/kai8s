@@ -1,12 +1,13 @@
 import requests
 import json
 
-def send_request(prompt):
-    url = "http://localhost:80/api/generate"
+def send_request(model, prompt):
+    url = f"http://localhost:80/api/{model}/generate"
     headers = {
         "Content-Type": "application/json"
     }
     data = {
+        "model": model,
         "prompt": prompt,
         "stream": False
     }
@@ -19,5 +20,8 @@ def send_request(prompt):
 
 if __name__ == "__main__":
     prompt = "Why is the sky blue?"
-    result = send_request(prompt)
-    print(f"Response: {result}")
+    models = ["tinyllama", "qwen2", "phi3", "llama3"]
+    for model in models:
+        result = send_request(model, prompt)
+        print(prompt)
+        print(f"Response from {model}: {result}\n\n")

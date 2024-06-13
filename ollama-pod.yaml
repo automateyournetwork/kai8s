@@ -6,14 +6,16 @@ metadata:
     app: ollama
 spec:
   containers:
-  - name: ollama-llama3
+  - name: ollama-tinyllama
     image: ollama/ollama:latest
-    command: ['sh', '-c', 'ollama start --port 11434 & sleep 10; ollama pull llama3 -o /models/llama3-model.bin && tail -f /dev/null']
+    command: ['sh', '-c', 'ollama start & sleep 20; ollama pull tinyllama && tail -f /dev/null']
     ports:
     - containerPort: 11434
     env:
     - name: OLLAMA_MODEL_PATH
       value: /models/
+    - name: OLLAMA_HOST
+      value: "127.0.0.1:11434"
     resources:
       requests:
         memory: "2Gi"
@@ -26,12 +28,14 @@ spec:
       name: model-storage
   - name: ollama-phi3
     image: ollama/ollama:latest
-    command: ['sh', '-c', 'ollama start --port 11435 & sleep 10; ollama pull phi3 -o /models/phi3-model.bin && tail -f /dev/null']
+    command: ['sh', '-c', 'ollama start & sleep 20; ollama pull phi3 && tail -f /dev/null']
     ports:
     - containerPort: 11435
     env:
     - name: OLLAMA_MODEL_PATH
       value: /models/
+    - name: OLLAMA_HOST
+      value: "127.0.0.1:11435"
     resources:
       requests:
         memory: "2Gi"
@@ -42,13 +46,53 @@ spec:
     volumeMounts:
     - mountPath: /models
       name: model-storage
+  - name: ollama-llama3
+    image: ollama/ollama:latest
+    command: ['sh', '-c', 'ollama start & sleep 20; ollama pull llama3 && tail -f /dev/null']
+    ports:
+    - containerPort: 11436
+    env:
+    - name: OLLAMA_MODEL_PATH
+      value: /models/
+    - name: OLLAMA_HOST
+      value: "127.0.0.1:11436"
+    resources:
+      requests:
+        memory: "2Gi"
+        cpu: "1"
+      limits:
+        memory: "4Gi"
+        cpu: "2"
+    volumeMounts:
+    - mountPath: /models
+      name: model-storage
+  - name: ollama-qwen2
+    image: ollama/ollama:latest
+    command: ['sh', '-c', 'ollama start & sleep 20; ollama pull qwen2:1.5b && tail -f /dev/null']
+    ports:
+    - containerPort: 11437
+    env:
+    - name: OLLAMA_MODEL_PATH
+      value: /models/
+    - name: OLLAMA_HOST
+      value: "127.0.0.1:11437"
+    resources:
+      requests:
+        memory: "2Gi"
+        cpu: "1"
+      limits:
+        memory: "4Gi"
+        cpu: "2"
+    volumeMounts:
+    - mountPath: /models
+      name: model-storage            
   - name: nginx
     image: nginx:latest
     ports:
     - containerPort: 80
     volumeMounts:
-    - name: nginx-config
-      mountPath: /etc/nginx/nginx.conf
+    - mountPath: /etc/nginx/nginx.conf
+      name: nginx-config
       subPath: nginx.conf
   volumes:
   - name: model-storage

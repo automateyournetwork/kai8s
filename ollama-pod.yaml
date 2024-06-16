@@ -68,7 +68,7 @@ spec:
       name: model-storage
   - name: ollama-qwen2
     image: ollama/ollama:latest
-    command: ['sh', '-c', 'ollama start & sleep 20; ollama pull qwen2:1.5b && tail -f /dev/null']
+    command: ['sh', '-c', 'ollama start & sleep 20; ollama pull qwen2 && tail -f /dev/null']
     ports:
     - containerPort: 11437
     env:
@@ -85,7 +85,87 @@ spec:
         cpu: "2"
     volumeMounts:
     - mountPath: /models
-      name: model-storage            
+      name: model-storage
+  - name: ollama-aya
+    image: ollama/ollama:latest
+    command: ['sh', '-c', 'ollama start & sleep 20; ollama pull aya && tail -f /dev/null']
+    ports:
+    - containerPort: 11438
+    env:
+    - name: OLLAMA_MODEL_PATH
+      value: /models/
+    - name: OLLAMA_HOST
+      value: "127.0.0.1:11438"
+    resources:
+      requests:
+        memory: "2Gi"
+        cpu: "1"
+      limits:
+        memory: "4Gi"
+        cpu: "2"
+    volumeMounts:
+    - mountPath: /models
+      name: model-storage
+  - name: ollama-mistral
+    image: ollama/ollama:latest
+    command: ['sh', '-c', 'ollama start & sleep 20; ollama pull mistral && tail -f /dev/null']
+    ports:
+    - containerPort: 11439
+    env:
+    - name: OLLAMA_MODEL_PATH
+      value: /models/
+    - name: OLLAMA_HOST
+      value: "127.0.0.1:11439"
+    resources:
+      requests:
+        memory: "2Gi"
+        cpu: "1"
+      limits:
+        memory: "4Gi"
+        cpu: "2"
+    volumeMounts:
+    - mountPath: /models
+      name: model-storage
+  - name: ollama-gemma
+    image: ollama/ollama:latest
+    command: ['sh', '-c', 'ollama start & sleep 20; ollama pull gemma && tail -f /dev/null']
+    ports:
+    - containerPort: 11440
+    env:
+    - name: OLLAMA_MODEL_PATH
+      value: /models/
+    - name: OLLAMA_HOST
+      value: "127.0.0.1:11440"
+    resources:
+      requests:
+        memory: "2Gi"
+        cpu: "1"
+      limits:
+        memory: "4Gi"
+        cpu: "2"
+    volumeMounts:
+    - mountPath: /models
+      name: model-storage
+  - name: ollama-yi
+    image: ollama/ollama:latest
+    command: ['sh', '-c', 'ollama start & sleep 20; ollama pull yi && tail -f /dev/null']
+    ports:
+    - containerPort: 11441
+    env:
+    - name: OLLAMA_MODEL_PATH
+      value: /models/
+    - name: OLLAMA_HOST
+      value: "127.0.0.1:11441"
+    resources:
+      requests:
+        memory: "2Gi"
+        cpu: "1"
+      limits:
+        memory: "4Gi"
+        cpu: "2"
+    volumeMounts:
+    - mountPath: /models
+      name: model-storage                    
   - name: nginx
     image: nginx:latest
     ports:

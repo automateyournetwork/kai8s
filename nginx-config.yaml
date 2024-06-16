@@ -23,7 +23,19 @@ data:
       }  
       upstream qwen2_server {
         server 127.0.0.1:11437;
-      }      
+      }
+      upstream aya_server {
+        server 127.0.0.1:11438;
+      }
+      upstream mistral_server {
+        server 127.0.0.1:11439;
+      }
+      upstream gemma_server {
+        server 127.0.0.1:11440;
+      }
+      upstream yi_server {
+        server 127.0.0.1:11441;
+      }                          
       server {
         listen 80;
 
@@ -67,6 +79,46 @@ data:
           proxy_read_timeout 600s;
           proxy_connect_timeout 600s;
           proxy_send_timeout 600s;
-        }                
+        }
+        location /api/aya/generate {
+          proxy_pass http://aya_server/api/generate;
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+          proxy_read_timeout 600s;
+          proxy_connect_timeout 600s;
+          proxy_send_timeout 600s;
+        } 
+        location /api/mistral/generate {
+          proxy_pass http://mistral_server/api/generate;
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+          proxy_read_timeout 600s;
+          proxy_connect_timeout 600s;
+          proxy_send_timeout 600s;
+        }
+        location /api/gemma/generate {
+          proxy_pass http://gemma_server/api/generate;
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+          proxy_read_timeout 600s;
+          proxy_connect_timeout 600s;
+          proxy_send_timeout 600s;
+        }
+        location /api/yi/generate {
+          proxy_pass http://yi_server/api/generate;
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+          proxy_read_timeout 600s;
+          proxy_connect_timeout 600s;
+          proxy_send_timeout 600s;
+        }                   
       }
     }

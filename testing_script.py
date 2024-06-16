@@ -1,5 +1,6 @@
 import requests
 import json
+import time
 
 def send_request(model, prompt):
     url = f"http://localhost:80/api/{model}/generate"
@@ -9,7 +10,8 @@ def send_request(model, prompt):
     data = {
         "model": model,
         "prompt": prompt,
-        "stream": False
+        "stream": False,
+        "keep_alive": 0
     }
     try:
         response = requests.post(url, headers=headers, data=json.dumps(data))
@@ -20,7 +22,7 @@ def send_request(model, prompt):
 
 if __name__ == "__main__":
     prompt = "Why is the sky blue?"
-    models = ["tinyllama", "qwen2", "phi3", "llama3"]
+    models = ["gemma", "aya", "llama3", "mistral", "qwen2", "yi", "phi3", "tinyllama"]
     for model in models:
         result = send_request(model, prompt)
         print(prompt)

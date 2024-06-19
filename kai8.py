@@ -21,16 +21,52 @@ def send_request(model, prompt):
     except requests.exceptions.RequestException as e:
         return f"Error: {e}"
 
-# Streamlit app UI
+# Initialize session state
+if 'selected_models' not in st.session_state:
+    st.session_state.selected_models = {model: False for model in ["gemma", "aya", "llama3", "mistral", "wizardlm2", "qwen2", "phi3", "tinyllama", "openchat"]}
+if 'step' not in st.session_state:
+    st.session_state.step = 1
+
+# Define the model selection page
+def model_selection():
+    st.title("Select Models")
+    all_models = ["gemma", "aya", "llama3", "mistral", "wizardlm2", "qwen2", "phi3", "tinyllama", "openchat"]
+
+    def select_all():
+        for model in all_models:
+            st.session_state.selected_models[model] = True
+
+    def deselect_all():
+        for model in all_models:
+            st.session_state.selected_models[model] = False
+
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        if st.button('Select All Models'):
+            select_all()
+    with col2:
+        if st.button('Deselect All Models'):
+            deselect_all()
+
+    col1, col2, col3 = st.columns(3)
+    for idx, model in enumerate(all_models):
+        col = [col1, col2, col3][idx % 3]
+        with col:
+            st.session_state.selected_models[model] = st.checkbox(model, value=st.session_state.selected_models[model], key=model)
+
+    if st.button('Next'):
+        st.session_state.step = 2
+
+# Define the chat interface page
 def chat_interface():
     st.title("KAI8 - Multi-AI Chat with Consensus")
     user_input = st.text_input("Ask a question:")
-    models = ["gemma", "aya", "llama3", "mistral", "wizardlm2", "qwen2", "phi3", "tinyllama", "openchat"]
+    selected_models = [model for model in st.session_state.selected_models if st.session_state.selected_models[model]]
 
     if user_input and st.button("Send"):
         with st.spinner("Thinking..."):
             all_results = []
-            for model in models:
+            for model in selected_models:
                 response = send_request(model, user_input)
                 st.write(f"Response from {model}: {response}")
                 all_results.append({"model": model, "response": response})
@@ -41,7 +77,7 @@ def chat_interface():
                 f"{user_input} Here are the answers from each LLM so far: {all_results}"
             )
             consensus_responses = []
-            for model in models:
+            for model in selected_models:
                 consensus_response = send_request(model, consensus_prompt)
                 st.write(f"Consensus response from {model}: {consensus_response}")
                 consensus_responses.append(consensus_response)
@@ -51,11 +87,14 @@ def chat_interface():
                 f"{user_input} Here are the consensus answers from each LLM so far: {consensus_responses}"
             )
             final_consensus_responses = []
-            for model in models:
+            for model in selected_models:
                 final_consensus_response = send_request(model, final_consensus_prompt)
                 st.write(f"Final consensus response from {model}: {final_consensus_response}")
                 final_consensus_responses.append(final_consensus_response)
 
 # Run the Streamlit app
 if __name__ == "__main__":
-    chat_interface()
+    if st.session_state.step == 1:
+        model_selection()
+    elif st.session_state.step == 2:
+        chat_interface()

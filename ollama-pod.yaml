@@ -16,6 +16,8 @@ spec:
       value: /models/
     - name: OLLAMA_HOST
       value: "127.0.0.1:11434"
+    - name: OLLAMA_KEEP_ALIVE
+      value: "0"
     resources:
       requests:
         memory: "2Gi"
@@ -36,6 +38,8 @@ spec:
       value: /models/
     - name: OLLAMA_HOST
       value: "127.0.0.1:11435"
+    - name: OLLAMA_KEEP_ALIVE
+      value: "0"      
     resources:
       requests:
         memory: "2Gi"
@@ -56,6 +60,8 @@ spec:
       value: /models/
     - name: OLLAMA_HOST
       value: "127.0.0.1:11436"
+    - name: OLLAMA_KEEP_ALIVE
+      value: "0"      
     resources:
       requests:
         memory: "2Gi"
@@ -76,6 +82,8 @@ spec:
       value: /models/
     - name: OLLAMA_HOST
       value: "127.0.0.1:11437"
+    - name: OLLAMA_KEEP_ALIVE
+      value: "0"      
     resources:
       requests:
         memory: "2Gi"
@@ -96,6 +104,8 @@ spec:
       value: /models/
     - name: OLLAMA_HOST
       value: "127.0.0.1:11438"
+    - name: OLLAMA_KEEP_ALIVE
+      value: "0"      
     resources:
       requests:
         memory: "2Gi"
@@ -116,6 +126,8 @@ spec:
       value: /models/
     - name: OLLAMA_HOST
       value: "127.0.0.1:11439"
+    - name: OLLAMA_KEEP_ALIVE
+      value: "0"      
     resources:
       requests:
         memory: "2Gi"
@@ -136,6 +148,8 @@ spec:
       value: /models/
     - name: OLLAMA_HOST
       value: "127.0.0.1:11440"
+    - name: OLLAMA_KEEP_ALIVE
+      value: "0"      
     resources:
       requests:
         memory: "2Gi"
@@ -146,9 +160,9 @@ spec:
     volumeMounts:
     - mountPath: /models
       name: model-storage
-  - name: ollama-yi
+  - name: ollama-wizardlm2
     image: ollama/ollama:latest
-    command: ['sh', '-c', 'ollama start & sleep 20; ollama pull yi && tail -f /dev/null']
+    command: ['sh', '-c', 'ollama start & sleep 20; ollama pull wizardlm2 && tail -f /dev/null']
     ports:
     - containerPort: 11441
     env:
@@ -156,6 +170,8 @@ spec:
       value: /models/
     - name: OLLAMA_HOST
       value: "127.0.0.1:11441"
+    - name: OLLAMA_KEEP_ALIVE
+      value: "0"      
     resources:
       requests:
         memory: "2Gi"
@@ -165,7 +181,42 @@ spec:
         cpu: "2"
     volumeMounts:
     - mountPath: /models
-      name: model-storage                    
+      name: model-storage
+  - name: ollama-openchat
+    image: ollama/ollama:latest
+    command: ['sh', '-c', 'ollama start & sleep 20; ollama pull openchat && tail -f /dev/null']
+    ports:
+    - containerPort: 11442
+    env:
+    - name: OLLAMA_MODEL_PATH
+      value: /models/
+    - name: OLLAMA_HOST
+      value: "127.0.0.1:11442"
+    - name: OLLAMA_KEEP_ALIVE
+      value: "0"      
+    resources:
+      requests:
+        memory: "2Gi"
+        cpu: "1"
+      limits:
+        memory: "4Gi"
+        cpu: "2"
+    volumeMounts:
+    - mountPath: /models
+      name: model-storage      
+  - name: kai8
+    image: johncapobianco/kai8:latest
+    ports:
+    - containerPort: 8501
+    resources:
+      requests:
+        memory: "2Gi"
+        cpu: "1"
+        nvidia.com/gpu: 1  # Request one GPU
+      limits:
+        memory: "4Gi"
+        cpu: "2"
+        nvidia.com/gpu: 1  # Limit to one GPU      
   - name: nginx
     image: nginx:latest
     ports:

@@ -23,14 +23,14 @@ def send_request(model, prompt):
 
 # Initialize session state
 if 'selected_models' not in st.session_state:
-    st.session_state.selected_models = {model: False for model in ["gemma", "aya", "llama3", "mistral", "wizardlm2", "qwen2", "phi3", "tinyllama", "openchat"]}
+    st.session_state.selected_models = {model: False for model in ["gemma", "aya", "llama3", "mistral", "wizardlm2", "qwen2", "phi3", "tinyllama", "openchat", "yi", "falcon2"]}
 if 'step' not in st.session_state:
     st.session_state.step = 1
 
 # Define the model selection page
 def model_selection():
     st.title("Select Models")
-    all_models = ["gemma", "aya", "llama3", "mistral", "wizardlm2", "qwen2", "phi3", "tinyllama", "openchat"]
+    all_models = ["gemma", "aya", "llama3", "mistral", "wizardlm2", "qwen2", "phi3", "tinyllama", "openchat", "yi", "falcon2"]
 
     def select_all():
         for model in all_models:
@@ -69,6 +69,7 @@ def chat_interface():
             for model in selected_models:
                 response = send_request(model, user_input)
                 st.write(f"Response from {model}: {response}")
+                st.markdown("""---""")
                 all_results.append({"model": model, "response": response})
 
             # Attempt to reach a consensus (optional)
@@ -80,6 +81,7 @@ def chat_interface():
             for model in selected_models:
                 consensus_response = send_request(model, consensus_prompt)
                 st.write(f"Consensus response from {model}: {consensus_response}")
+                st.markdown("""---""")
                 consensus_responses.append(consensus_response)
 
             final_consensus_prompt = (
@@ -90,6 +92,7 @@ def chat_interface():
             for model in selected_models:
                 final_consensus_response = send_request(model, final_consensus_prompt)
                 st.write(f"Final consensus response from {model}: {final_consensus_response}")
+                st.markdown("""---""")
                 final_consensus_responses.append(final_consensus_response)
 
 # Run the Streamlit app
